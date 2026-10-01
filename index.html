@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libros Solidarios - Interaktives Lernpanel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        eoi: {
+                            orange: '#e85d04',
+                            deepOrange: '#dc2f02',
+                            green: '#2b9348',
+                            lightGreen: '#55a630',
+                            darkBlue: '#1d3557',
+                            softBg: '#f8f9fa'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-eoi-orange to-eoi-deepOrange text-white p-3 rounded-2xl shadow-md">
+                    <i class="fa-solid font-bold fa-book-bookmark text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold tracking-widest text-eoi-green uppercase block">EOI Málaga Solidaria</span>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Libros Solidarios</h1>
+                </div>
+            </div>
+
+            <!-- Language Switcher -->
+            <div class="flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                <button id="lang-de" onclick="setLanguage('de')" class="px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-white text-eoi-darkBlue shadow-sm">
+                    🇩🇪 Deutsch (B1)
+                </button>
+                <button id="lang-es" onclick="setLanguage('es')" class="px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    🇪🇸 Español
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+        <!-- Top Banner & Counter -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Campaign Overview -->
+            <div class="lg:col-span-2 bg-gradient-to-br from-eoi-darkBlue to-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-white pointer-events-none">
+                    <i class="fa-solid fa-hand-holding-heart text-[240px]"></i>
+                </div>
+                <div class="relative z-10 space-y-4">
+                    <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-orange-200 border border-white/10">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span data-i18n="badge_text">EOI Málaga • Schuljahr 25/26</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold leading-tight" data-i18n="hero_title">
+                        Sammle Bücher & Helfe Menschen!
+                    </h2>
+                    <p class="text-slate-200 text-sm sm:text-base max-w-2xl leading-relaxed" data-i18n="hero_desc">
+                        Nimm ein Buch für eine Mindestspende von 1 € mit oder spende deine alten Bücher an der Pförtnerloge (Conserjería). Alle Einnahmen gehen direkt an gemeinnützige Organisationen.
+                    </p>
+                </div>
+
+                <div class="relative z-10 mt-6 pt-6 border-t border-white/10 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-300">
+                        <i class="fa-solid fa-circle-check text-eoi-lightGreen"></i>
+                        <span data-i18n="perk_1">100% Spende an ONGs</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-300">
+                        <i class="fa-solid fa-circle-check text-eoi-lightGreen"></i>
+                        <span data-i18n="perk_2">Abgabe an der Conserjería</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-300">
+                        <i class="fa-solid fa-circle-check text-eoi-lightGreen"></i>
+                        <span data-i18n="perk_3">Mindestspende 1 € / Buch</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Interactive Counter & Simulator -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-md flex flex-col justify-between space-y-6">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="stat_title">Gesammelte Spenden</span>
+                        <span class="inline-flex items-center text-xs font-semibold text-eoi-green bg-green-50 px-2.5 py-0.5 rounded-full border border-green-200">
+                            <span class="w-2 h-2 rounded-full bg-eoi-green mr-1.5 animate-pulse"></span>
+                            <span data-i18n="live_badge">Aktiv</span>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="total-raised" class="text-4xl font-extrabold text-slate-900 tracking-tight">2.450</span>
+                        <span class="text-2xl font-bold text-eoi-orange">€</span>
+                        <span class="text-xs text-slate-400 font-medium ml-1" data-i18n="goal_text">von 3.000 € Ziel</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mt-4 space-y-1.5">
+                        <div class="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                            <div id="progress-bar" class="bg-gradient-to-r from-eoi-orange to-eoi-green h-full rounded-full transition-all duration-500" style="width: 81.6%;"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-500 font-medium">
+                            <span id="progress-percent">81.6%</span>
+                            <span data-i18n="target_label">Ziel: 3.000 €</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Buttons -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                    <p class="text-xs font-semibold text-slate-700" data-i18n="simulate_title">Simuliere eine Spende (Interaktiv):</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="addDonation(1)" class="py-2 px-3 bg-white hover:bg-eoi-orange hover:text-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 shadow-sm transition-all">
+                            +1 €
+                        </button>
+                        <button onclick="addDonation(5)" class="py-2 px-3 bg-white hover:bg-eoi-orange hover:text-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 shadow-sm transition-all">
+                            +5 €
+                        </button>
+                        <button onclick="addDonation(10)" class="py-2 px-3 bg-white hover:bg-eoi-orange hover:text-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 shadow-sm transition-all">
+                            +10 €
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NGO Grid Section -->
+        <section class="space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-900" data-i18n="ngo_section_title">Unterstützte Organisationen (ONGs)</h3>
+                    <p class="text-sm text-slate-500" data-i18n="ngo_section_subtitle">Klicke auf eine Organisation, um mehr zu erfahren.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="ngo-container">
+                <!-- NGO Cards rendered dynamically by JS -->
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Book Donation Simulator Form -->
+            <section class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-orange-100 text-eoi-orange rounded-xl">
+                            <i class="fa-solid fa-book text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900" data-i18n="form_title">Buch spenden (Simulation)</h3>
+                            <p class="text-xs text-slate-500" data-i18n="form_subtitle">Trage ein Buch ein, das du der Schule schenken möchtest.</p>
+                        </div>
+                    </div>
+
+                    <form id="book-form" onsubmit="handleBookSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" data-i18n="label_book_title">Buchtitel</label>
+                            <input type="text" id="book-title" required placeholder="z. B. Der kleine Prinz / El principito" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-eoi-orange focus:border-eoi-orange text-sm outline-none transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" data-i18n="label_category">Kategorie</label>
+                                <select id="book-category" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-eoi-orange focus:border-eoi-orange text-sm outline-none transition-all">
+                                    <option value="Roman / Novel">Roman / Novela</option>
+                                    <option value="Lehrbuch / Idiomas">Sprachen / Idiomas</option>
+                                    <option value="Kinderbuch / Infantil">Kinderbuch / Infantil</option>
+                                    <option value="Sachbuch / Ensayo">Sachbuch / Ensayo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" data-i18n="label_language">Sprache</label>
+                                <select id="book-lang" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-eoi-orange focus:border-eoi-orange text-sm outline-none transition-all">
+                                    <option value="Deutsch">Deutsch</option>
+                                    <option value="Español">Español</option>
+                                    <option value="English">English</option>
+                                    <option value="Andere">Andere / Otro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-eoi-orange hover:bg-eoi-deepOrange text-white font-bold rounded-xl text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span data-i18n="btn_submit_book">Buch jetzt eintragen</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Feed of donated books -->
+                <div class="mt-6 pt-6 border-t border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3" data-i18n="recent_donations_title">Kürzlich gespendete Bücher:</h4>
+                    <div id="donated-books-list" class="space-y-2 max-h-36 overflow-y-auto custom-scrollbar pr-1">
+                        <!-- Items appended here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Quiz Section for B1 Students -->
+            <section class="bg-gradient-to-br from-slate-900 to-eoi-darkBlue text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 bg-white/10 text-orange-400 rounded-xl">
+                                <i class="fa-solid fa-brain text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold" data-i18n="quiz_title">B1 Leseverstehen Quiz</h3>
+                                <p class="text-xs text-slate-300" data-i18n="quiz_subtitle">Teste dein Wissen zum Text!</p>
+                            </div>
+                        </div>
+                        <span id="quiz-score" class="text-xs font-bold bg-white/10 px-3 py-1 rounded-full text-orange-300 border border-white/10">Punkte: 0/3</span>
+                    </div>
+
+                    <div id="quiz-container" class="space-y-6">
+                        <!-- Questions injected by JS -->
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
+                    <button onclick="resetQuiz()" class="text-xs text-slate-400 hover:text-white underline transition-all" data-i18n="btn_reset_quiz">
+                        Quiz neu starten
+                    </button>
+                    <span id="quiz-feedback" class="text-xs font-medium text-amber-300"></span>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- NGO Detail Modal -->
+    <div id="ngo-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-5 animate-fade-in">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content" class="space-y-4">
+                <!-- Modal content dynamically injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-2">
+            <p>EOI Málaga • Proyecto de Mediación e Interculturalidad (Nivel B1 / B2)</p>
+            <p class="text-slate-400">Interaktives Unterrichtsmaterial für den Deutschunterricht.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data and State
+        let currentLang = 'de';
+        let currentTotal = 2450;
+        const goalTotal = 3000;
+        let quizAnswers = {};
+
+        const ngoData = [
+            {
+                id: 'bancosol',
+                name: 'Bancosol Alimentos',
+                icon: 'fa-bowl-food',
+                color: 'text-blue-600',
+                bgColor: 'bg-blue-50',
+                badge: 'Málaga / Costa del Sol',
+                desc_de: 'Bancosol sammelt Lebensmittel für Familien in Not in Málaga und an der Costa del Sol.',
+                desc_es: 'Banco de Alimentos de la Costa del Sol. Distribuye comida a familias necesitadas.',
+                detail_de: 'Diese Organisation sorgt dafür, dass Armut bekämpft wird, indem überschüssige Lebensmittel an soziale Einrichtungen und bedürftige Personen verteilt werden.',
+                detail_es: 'Organización sin ánimo de lucro que gestiona la recogida y redistribución de alimentos en la provincia de Málaga.'
+            },
+            {
+                id: 'cruzroja',
+                name: 'Cruz Roja',
+                icon: 'fa-kit-medical',
+                color: 'text-red-600',
+                bgColor: 'bg-red-50',
+                badge: 'International',
+                desc_de: 'Das Rote Kreuz hilft Menschen bei Notfällen, Katastrophen und sozialen Problemen.',
+                desc_es: 'Asistencia en emergencias, auxilio social y programas de inclusión.',
+                detail_de: 'Das Rote Kreuz bietet Notfallhilfe, medizinische Versorgung und soziale Unterstützung für benachteiligte Menschen in Spanien und weltweit.',
+                detail_es: 'Ofrece atención a colectivos vulnerables, socorros, emergencias y cooperación internacional.'
+            },
+            {
+                id: 'savethechildren',
+                name: 'Save the Children',
+                icon: 'fa-child-reaching',
+                color: 'text-rose-500',
+                bgColor: 'bg-rose-50',
+                badge: 'Kinderrechte',
+                desc_de: 'Schützt Kinderrechte und hilft Kindern in Armut oder Krisenregionen.',
+                desc_es: 'Protección de los derechos de la infancia y lucha contra la pobreza infantil.',
+                detail_de: 'Setzt sich weltweit dafür ein, dass Kinder Zugang zu Bildung, Gesundheit und Schutz vor Gewalt erhalten.',
+                detail_es: 'Organización dedicada a garantizar la supervivencia, educación y protección de la infancia.'
+            },
+            {
+                id: 'msf',
+                name: 'Médicos Sin Fronteras',
+                icon: 'fa-user-doctor',
+                color: 'text-red-700',
+                bgColor: 'bg-red-50',
+                badge: 'Medizinische Hilfe',
+                desc_de: 'Ärzte ohne Grenzen leistet medizinische Nothilfe in Krisen- und Kriegsgebieten.',
+                desc_es: 'Ayuda médica humanitaria en zonas de conflicto y catástrofes.',
+                detail_de: 'Ärzte und Pflegekräfte leisten schnelle medizinische Hilfe für Opfer von Bewaffneten Konflikten, Epidemien oder Naturkatastrophen.',
+                detail_es: 'Acción médica independiente y humanitaria en más de 70 países.'
+            },
+            {
+                id: 'cear',
+                name: 'CEAR',
+                icon: 'fa-hand-holding-hand',
+                color: 'text-emerald-600',
+                bgColor: 'bg-emerald-50',
+                badge: 'Flüchtlingshilfe',
+                desc_de: 'Spanische Kommission für Flüchtlingshilfe. Sie unterstützt Asylsuchende und Migranten.',
+                desc_es: 'Comisión Española de Ayuda al Refugiado. Asilo e integración.',
+                detail_de: 'CEAR verteidigt das Recht auf Asyl und hilft Geflüchteten bei der juristischen und sozialen Integration in Spanien.',
+                detail_es: 'Defiende el derecho de asilo y apoya el proceso de integración de personas refugiadas.'
+            },
+            {
+                id: 'openarms',
+                name: 'Open Arms',
+                icon: 'fa-life-ring',
+                color: 'text-red-500',
+                bgColor: 'bg-red-50',
+                badge: 'Rescate Marítimo',
+                desc_de: 'Rettet Geflüchtete und Migranten aus Seenot im Mittelmeer.',
+                desc_es: 'Búsqueda y rescate en el mar de personas en peligro.',
+                detail_de: 'Eine Nichtregierungsorganisation, deren Hauptaufgabe darin besteht, Menschen zu retten, die versuchen, das Mittelmeer auf gefährlichen Booten zu überqueren.',
+                detail_es: 'ONG dedicada a la protección de la vida humana en el mar y la denuncia de vulneraciones de derechos.'
+            }
+        ];
+
+        const quizData = [
+            {
+                id: 1,
+                question_de: "Wie viel kostet ein Buch bei der Aktion 'Libros Solidarios' mindestens?",
+                question_es: "¿Cuánto cuesta como mínimo un libro en la campaña?",
+                options_de: ["0,50 Euro", "1,00 Euro", "5,00 Euro"],
+                options_es: ["0,50 euros", "1,00 euro", "5,00 euros"],
+                correct: 1,
+                explanation_de: "Richtig! Die Mindestspende beträgt 1 € pro Buch.",
+                explanation_es: "¡Correcto! La aportación mínima es de 1 € por ejemplar."
+            },
+            {
+                id: 2,
+                question_de: "Wo kann man gebrauchte Bücher in der Schule abgeben?",
+                question_es: "¿Dónde se pueden dejar los libros donados en la escuela?",
+                options_de: ["In der Bibliothek", "In der Conserjería (Pförtnerloge)", "Im Lehrerzimmer"],
+                options_es: ["En la biblioteca", "En Conserjería", "En la sala de profesores"],
+                correct: 1,
+                explanation_de: "Stimmt! Man gibt die Bücher direkt in der Conserjería ab.",
+                explanation_es: "¡Exacto! Los libros se entregan en Conserjería."
+            },
+            {
+                id: 3,
+                question_de: "Wohin geht das gesammelte Geld aus dem Bücherverkauf?",
+                question_es: "¿A dónde va destinado todo el dinero recaudado?",
+                options_de: ["An neue Schulmöbel", "Zu 100% an verschiedene ONGs", "An die Lehrkräfte"],
+                options_es: ["A mobiliario escolar", "100% a ONGs beneficiarias", "A los profesores"],
+                correct: 1,
+                explanation_de: "Genau! Der gesamte Erlös geht an Partner-Hilfsorganisationen.",
+                explanation_es: "¡Correcto! Todo lo recaudado se dona íntegramente a ONGs."
+            }
+        ];
+
+        const translations = {
+            de: {
+                badge_text: "EOI Málaga • Schuljahr 25/26",
+                hero_title: "Sammle Bücher & Helfe Menschen!",
+                hero_desc: "Nimm ein Buch für eine Mindestspende von 1 € mit oder spende deine alten Bücher an der Pförtnerloge (Conserjería). Alle Einnahmen gehen direkt an gemeinnützige Organisationen.",
+                perk_1: "100% Spende an ONGs",
+                perk_2: "Abgabe an der Conserjería",
+                perk_3: "Mindestspende 1 € / Buch",
+                stat_title: "Gesammelte Spenden",
+                live_badge: "Aktiv",
+                goal_text: "von 3.000 € Ziel",
+                target_label: "Ziel: 3.000 €",
+                simulate_title: "Simuliere eine Spende (Interaktiv):",
+                ngo_section_title: "Unterstützte Organisationen (ONGs)",
+                ngo_section_subtitle: "Klicke auf eine Organisation, um mehr Details zu sehen.",
+                form_title: "Buch spenden (Simulation)",
+                form_subtitle: "Trage ein Buch ein, das du der Schule schenken möchtest.",
+                label_book_title: "Buchtitel",
+                label_category: "Kategorie",
+                label_language: "Sprache",
+                btn_submit_book: "Buch jetzt eintragen",
+                recent_donations_title: "Kürzlich gespendete Bücher:",
+                quiz_title: "B1 Leseverstehen Quiz",
+                quiz_subtitle: "Teste dein Wissen zum Text!",
+                btn_reset_quiz: "Quiz neu starten"
+            },
+            es: {
+                badge_text: "EOI Málaga • Curso 25/26",
+                hero_title: "¡Regala lectura, apoya una buena causa!",
+                hero_desc: "Llévate libros por una aportación mínima de 1 € por ejemplar o dona tus libros dejándolos en Conserjería. Todo lo recaudado se donará íntegramente a ONGs.",
+                perk_1: "100% donación a ONGs",
+                perk_2: "Entrega en Conserjería",
+                perk_3: "Aportación mínima 1 €",
+                stat_title: "Total Recaudado",
+                live_badge: "En curso",
+                goal_text: "de 3.000 € meta",
+                target_label: "Meta: 3.000 €",
+                simulate_title: "Simula una aportación (Interactivo):",
+                ngo_section_title: "ONGs Beneficiarias",
+                ngo_section_subtitle: "Haz clic en cada organización para ver más información.",
+                form_title: "Donar un libro (Simulador)",
+                form_subtitle: "Añade el título de un libro que quieras donar a la campaña.",
+                label_book_title: "Título del libro",
+                label_category: "Categoría",
+                label_language: "Idioma",
+                btn_submit_book: "Registrar libro",
+                recent_donations_title: "Libros donados recientemente:",
+                quiz_title: "Cuestionario de Comprensión",
+                quiz_subtitle: "¡Comprueba lo que has aprendido!",
+                btn_reset_quiz: "Reiniciar test"
+            }
+        };
+
+        const initialDonatedBooks = [
+            { title: "Der kleine Prinz", category: "Kinderbuch", lang: "Deutsch" },
+            { title: "Cien años de soledad", category: "Roman", lang: "Español" },
+            { title: "Momo (Michael Ende)", category: "Roman", lang: "Deutsch" }
+        ];
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    elem.textContent = translations[lang][key];
+                }
+            });
+
+            // Toggle language buttons style
+            if (lang === 'de') {
+                document.getElementById('lang-de').className = 'px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-white text-eoi-darkBlue shadow-sm';
+                document.getElementById('lang-es').className = 'px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900';
+            } else {
+                document.getElementById('lang-es').className = 'px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-white text-eoi-darkBlue shadow-sm';
+                document.getElementById('lang-de').className = 'px-3.5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900';
+            }
+
+            renderNGOs();
+            renderQuiz();
+        }
+
+        function renderNGOs() {
+            const container = document.getElementById('ngo-container');
+            container.innerHTML = '';
+
+            ngoData.forEach(ngo => {
+                const desc = currentLang === 'de' ? ngo.desc_de : ngo.desc_es;
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer card-hover flex flex-col justify-between';
+                card.onclick = () => openModal(ngo);
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 rounded-xl ${ngo.bgColor} ${ngo.color} flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid ${ngo.icon}"></i>
+                            </div>
+                            <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">${ngo.badge}</span>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-900">${ngo.name}</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">${desc}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold ${ngo.color}">
+                        <span>${currentLang === 'de' ? 'Mehr erfahren' : 'Ver más'}</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openModal(ngo) {
+            const content = document.getElementById('modal-content');
+            const desc = currentLang === 'de' ? ngo.desc_de : ngo.desc_es;
+            const detail = currentLang === 'de' ? ngo.detail_de : ngo.detail_es;
+
+            content.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-2xl ${ngo.bgColor} ${ngo.color} flex items-center justify-center text-xl">
+                        <i class="fa-solid ${ngo.icon}"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase text-slate-400">${ngo.badge}</span>
+                        <h3 class="text-xl font-extrabold text-slate-900">${ngo.name}</h3>
+                    </div>
+                </div>
+                <div class="space-y-3 text-slate-700 text-sm leading-relaxed">
+                    <p class="font-medium text-slate-900">${desc}</p>
+                    <p class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-600">${detail}</p>
+                </div>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="closeModal()" class="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-all">
+                        ${currentLang === 'de' ? 'Schließen' : 'Cerrar'}
+                    </button>
+                </div>
+            `;
+            document.getElementById('ngo-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('ngo-modal').classList.add('hidden');
+        }
+
+        function addDonation(amount) {
+            currentTotal += amount;
+            document.getElementById('total-raised').textContent = currentTotal.toLocaleString('de-DE');
+            
+            const percent = Math.min(100, ((currentTotal / goalTotal) * 100)).toFixed(1);
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-percent').textContent = percent + '%';
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const question = currentLang === 'de' ? q.question_de : q.question_es;
+                const options = currentLang === 'de' ? q.options_de : q.options_es;
+
+                const qBox = document.createElement('div');
+                qBox.className = 'space-y-2.5';
+                qBox.innerHTML = `
+                    <p class="text-xs font-semibold text-slate-200">${idx + 1}. ${question}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        ${options.map((opt, optIdx) => `
+                            <button onclick="answerQuiz(${q.id}, ${optIdx})" id="quiz-btn-${q.id}-${optIdx}" className="w-full text-left p-2.5 rounded-xl border text-xs font-medium transition-all bg-white/5 border-white/10 hover:bg-white/15 text-slate-200">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(qBox);
+            });
+
+            updateQuizUI();
+        }
+
+        function answerQuiz(qId, optIdx) {
+            quizAnswers[qId] = optIdx;
+            updateQuizUI();
+        }
+
+        function updateQuizUI() {
+            let score = 0;
+            quizData.forEach(q => {
+                const userAns = quizAnswers[q.id];
+                const optionsCount = q.options_de.length;
+
+                for (let i = 0; i < optionsCount; i++) {
+                    const btn = document.getElementById(`quiz-btn-${q.id}-${i}`);
+                    if (!btn) continue;
+
+                    if (userAns !== undefined) {
+                        if (i === q.correct) {
+                            btn.className = 'w-full text-left p-2.5 rounded-xl border text-xs font-medium transition-all bg-emerald-500/20 border-emerald-500 text-emerald-200';
+                        } else if (i === userAns) {
+                            btn.className = 'w-full text-left p-2.5 rounded-xl border text-xs font-medium transition-all bg-rose-500/20 border-rose-500 text-rose-200';
+                        } else {
+                            btn.className = 'w-full text-left p-2.5 rounded-xl border text-xs font-medium transition-all bg-white/5 border-white/10 opacity-50 text-slate-400';
+                        }
+                    } else {
+                        btn.className = 'w-full text-left p-2.5 rounded-xl border text-xs font-medium transition-all bg-white/5 border-white/10 hover:bg-white/15 text-slate-200';
+                    }
+                }
+
+                if (userAns === q.correct) {
+                    score++;
+                }
+            });
+
+            const scoreElem = document.getElementById('quiz-score');
+            if (scoreElem) {
+                scoreElem.textContent = `${currentLang === 'de' ? 'Punkte' : 'Puntos'}: ${score}/${quizData.length}`;
+            }
+
+            const feedback = document.getElementById('quiz-feedback');
+            if (Object.keys(quizAnswers).length === quizData.length) {
+                if (score === quizData.length) {
+                    feedback.textContent = currentLang === 'de' ? '🎉 Ausgezeichnet! Alles richtig.' : '🎉 ¡Excelente! Todo correcto.';
+                } else {
+                    feedback.textContent = currentLang === 'de' ? 'Guter Versuch! Überprüfe die grünen Antworten.' : '¡Buen intento! Revisa las respuestas en verde.';
+                }
+            } else {
+                feedback.textContent = '';
+            }
+        }
+
+        function resetQuiz() {
+            quizAnswers = {};
+            renderQuiz();
+        }
+
+        function handleBookSubmit(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('book-title');
+            const catSelect = document.getElementById('book-category');
+            const langSelect = document.getElementById('book-lang');
+
+            if (!titleInput.value.trim()) return;
+
+            const newBook = {
+                title: titleInput.value.trim(),
+                category: catSelect.value,
+                lang: langSelect.value
+            };
+
+            addBookToList(newBook, true);
+            addDonation(1); // Simulate +1€ raise per book
+
+            titleInput.value = '';
+        }
+
+        function addBookToList(book, animate = false) {
+            const list = document.getElementById('donated-books-list');
+            const item = document.createElement('div');
+            item.className = `p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center text-xs ${animate ? 'animate-bounce' : ''}`;
+            item.innerHTML = `
+                <div class="flex items-center space-x-2 truncate">
+                    <i class="fa-solid fa-book-bookmark text-eoi-orange"></i>
+                    <span class="font-bold text-slate-800 truncate">${book.title}</span>
+                </div>
+                <div class="flex items-center space-x-2 text-[10px] shrink-0">
+                    <span class="px-2 py-0.5 bg-white border border-slate-200 rounded-md font-medium text-slate-600">${book.category}</span>
+                    <span class="px-2 py-0.5 bg-orange-100 text-eoi-orange rounded-md font-bold">${book.lang}</span>
+                </div>
+            `;
+            list.insertBefore(item, list.firstChild);
+        }
+
+        window.onload = function() {
+            setLanguage('de');
+            initialDonatedBooks.forEach(b => addBookToList(b));
+        };
+    </script>
+</body>
+</html>
